@@ -524,7 +524,9 @@ define("backburner",
       },
 
       hasTimers: function() {
-        return !!timers.length || autorun;
+        // Patched support for async test helpers waiting for debouncees and throttlers
+        // SEE: https://github.com/ebryn/backburner.js/pull/81
+        return !!timers.length || !!debouncees.length || !!throttlers.length || autorun;
       },
 
       cancel: function(timer) {
