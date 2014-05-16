@@ -2,7 +2,7 @@
   "features": {
     "ember-metal-computed-empty-array": false,
     "query-params-new": true,
-    "ember-routing-named-substates": false,
+    "ember-routing-named-substates": true,
     "ember-handlebars-caps-lookup": false,
     "ember-handlebars-log-primitives": true,
     "ember-testing-routing-helpers": true,
