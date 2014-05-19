@@ -34782,7 +34782,15 @@ DSL.prototype = {
     }
 
 
-      },
+    
+      // For namespace-preserving nested resource (e.g. resource('foo.bar') within
+      // resource('foo')) we only want to use the last route name segment to determine
+      // the names of the error/loading substates (e.g. 'bar_loading')
+      name = name.split('.').pop();
+      route(this, name + '_loading');
+      route(this, name + '_error', { path: "/_unused_dummy_error_path_route_" + name + "/:error" });
+    
+  },
 
   push: function(url, name, callback) {
     var parts = name.split('.');
@@ -34795,7 +34803,11 @@ DSL.prototype = {
     Ember.assert("'basic' cannot be used as a route name.", name !== 'basic');
 
     route(this, name, options);
-      },
+    
+      route(this, name + '_loading');
+      route(this, name + '_error', { path: "/_unused_dummy_error_path_route_" + name + "/:error" });
+    
+  },
 
   generate: function() {
     var dslMatches = this.matches;
@@ -35574,6 +35586,13 @@ function findChildRouteName(parentRoute, originatingChildRoute, name) {
       namespace = parentRoute.routeName === 'application' ? '' : parentRoute.routeName + '.';
 
   
+    // First, try a named loading state, e.g. 'foo_loading'
+    childName = namespace + targetChildRouteName + '_' + name;
+    if (routeHasBeenDefined(router, childName)) {
+      return childName;
+    }
+  
+
   // Second, try general loading state, e.g. 'loading'
   childName = namespace + name;
   if (routeHasBeenDefined(router, childName)) {
